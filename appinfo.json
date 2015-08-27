@@ -9,27 +9,34 @@
     "resources": {
         "media": [
             {
+                "file": "images/clouds_trans.png",
+                "name": "CLOUDS",
+                "type": "png-trans"
+            },
+            {
+                "file": "images/background_trans.png",
+                "name": "CITY_BACKGROUND",
+                "type": "png-trans"
+            },
+            {
+                "file": "images/airplane_trans.png",
+                "name": "AIRPLANE",
+                "type": "png-trans"
+            },
+            {
                 "characterRegex": "[0-9:APM ]",
                 "file": "fonts/DIGIK___.TTF",
                 "name": "DIGITAL_KAUNO_FONT_65",
                 "type": "font"
-            },
-            {
-                "file": "images/airplane.png",
-                "name": "AIRPLANE",
-                "type": "png"
-            },
-            {
-                "file": "images/background.png",
-                "name": "CITY_BACKGROUND",
-                "type": "png"
             }
         ]
     },
-    "sdkVersion": "2",
+    "sdkVersion": "3",
     "shortName": "Time Flies By",
+    "targetPlatforms": [
+        "aplite"
+    ],
     "uuid": "7a270629-027f-42ae-8372-0e1344e81ea4",
-    "versionCode": 1,
     "versionLabel": "1.0",
     "watchapp": {
         "watchface": true
