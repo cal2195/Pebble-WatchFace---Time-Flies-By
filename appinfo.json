@@ -9,6 +9,17 @@
     "resources": {
         "media": [
             {
+                "characterRegex": "[0-9:APM ]",
+                "file": "fonts/DIGIK___.TTF",
+                "name": "DIGITAL_KAUNO_FONT_65",
+                "type": "font"
+            },
+            {
+                "file": "images/airplane.png",
+                "name": "AIRPLANE",
+                "type": "png"
+            },
+            {
                 "file": "images/background.png",
                 "name": "CITY_BACKGROUND",
                 "type": "png"
