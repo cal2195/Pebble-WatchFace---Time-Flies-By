@@ -1,13 +1,27 @@
 {
-    "appKeys": {},
+    "appKeys": {
+        "KEY_WEATHER": 0
+    },
     "capabilities": [
-        ""
+        "location"
     ],
     "companyName": "calmart101@gmail.com",
     "longName": "Time Flies By",
     "projectType": "native",
     "resources": {
         "media": [
+            {
+                "characterRegex": "[0-9:APM]",
+                "file": "fonts/MonospaceBold.ttf",
+                "name": "MONOSPACE_FONT_40",
+                "type": "font"
+            },
+            {
+                "characterRegex": "[0-9:APM]",
+                "file": "fonts/PoiretOne-Regular.ttf",
+                "name": "POIRET_ONE_FONT_35",
+                "type": "font"
+            },
             {
                 "file": "images/clouds_trans.png",
                 "name": "CLOUDS",
