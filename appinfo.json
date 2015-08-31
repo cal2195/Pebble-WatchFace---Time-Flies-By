@@ -11,15 +11,14 @@
     "resources": {
         "media": [
             {
-                "characterRegex": "[0-9:APM]",
-                "file": "fonts/MonospaceBold.ttf",
-                "name": "MONOSPACE_FONT_40",
-                "type": "font"
+                "file": "images/rain_trans.png",
+                "name": "RAIN",
+                "type": "png-trans"
             },
             {
                 "characterRegex": "[0-9:APM]",
-                "file": "fonts/PoiretOne-Regular.ttf",
-                "name": "POIRET_ONE_FONT_35",
+                "file": "fonts/MonospaceBold.ttf",
+                "name": "MONOSPACE_FONT_40",
                 "type": "font"
             },
             {
@@ -36,12 +35,6 @@
                 "file": "images/airplane_trans.png",
                 "name": "AIRPLANE",
                 "type": "png-trans"
-            },
-            {
-                "characterRegex": "[0-9:APM ]",
-                "file": "fonts/DIGIK___.TTF",
-                "name": "DIGITAL_KAUNO_FONT_65",
-                "type": "font"
             }
         ]
     },

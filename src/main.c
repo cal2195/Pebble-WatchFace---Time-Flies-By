@@ -9,11 +9,11 @@
 static Window *s_main_window;
 static TextLayer *s_time_layer;
 static GFont s_time_font;
-static GBitmap *s_city_bitmap_black, *s_city_bitmap_white, *s_airplane_bitmap, *s_clouds_bitmap;
-static Layer *s_background_layer, *s_airplane_layer, *s_clouds_layer;
+static GBitmap *s_city_bitmap_black, *s_city_bitmap_white, *s_airplane_bitmap, *s_clouds_bitmap, *s_rain_bitmap;
+static Layer *s_background_layer, *s_airplane_layer, *s_clouds_layer, *s_rain_layer;
 static InverterLayer *s_invert_layer;
 int airplane_height;
-bool daytime = false, clouds = false;
+bool daytime = false, clouds = false, rain = false;
 static char weather_buffer[32];
 
 static void draw_city(Layer *layer, GContext *ctx) {
@@ -46,6 +46,16 @@ static void draw_clouds(Layer *layer, GContext *ctx) {
   //graphics_draw_bitmap_in_rect(ctx, s_black_bitmap, gbitmap_get_bounds(s_black_bitmap));
 }
 
+static void draw_rain(Layer *layer, GContext *ctx) {
+  // Draw white
+  graphics_context_set_compositing_mode(ctx, GCompOpOr);
+  graphics_draw_bitmap_in_rect(ctx, s_rain_bitmap, gbitmap_get_bounds(s_rain_bitmap));
+
+  // Draw black
+  //graphics_context_set_compositing_mode(ctx, GCompOpClear);
+  //graphics_draw_bitmap_in_rect(ctx, s_black_bitmap, gbitmap_get_bounds(s_black_bitmap));
+}
+
 static void main_window_load(Window *window) {
   // Create Window's child Layers here
   
@@ -67,6 +77,12 @@ static void main_window_load(Window *window) {
   s_clouds_layer = layer_create(GRect(12, 25, 144, 32));
   layer_set_update_proc(s_clouds_layer, draw_clouds);
   layer_add_child(window_get_root_layer(window), s_clouds_layer);
+  
+  // Rain
+  s_rain_bitmap = gbitmap_create_with_resource(RESOURCE_ID_RAIN_WHITE);
+  s_rain_layer = layer_create(GRect(13, 36, 144, 64));
+  layer_set_update_proc(s_rain_layer, draw_rain);
+  layer_add_child(window_get_root_layer(window), s_rain_layer);
   
   //Time display
   s_time_layer = text_layer_create(GRect(0, 115, 144, 58));
@@ -108,6 +124,20 @@ static void update_time() {
     strftime(time_text, sizeof("00:00"), "%I:%M", tick_time);
   }
   text_layer_set_text(s_time_layer, time_text);
+  
+  // Get weather update every 30 minutes
+  if(tick_time->tm_min % 30 == 0) {
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Checking Weather!");
+    // Begin dictionary
+    DictionaryIterator *iter;
+    app_message_outbox_begin(&iter);
+  
+    // Add a key-value pair
+    dict_write_uint8(iter, 0, 0);
+  
+    // Send the message!
+    app_message_outbox_send();
+  }
 }
 
 static void update_airplane() {
@@ -126,20 +156,6 @@ static void update_airplane() {
 
 static void tick_handler(struct tm *ticktime, TimeUnits units_changed) {
   update_airplane();
-  
-  // Get weather update every 30 minutes
-  if(ticktime->tm_min % 30 == 0 && ticktime->tm_sec == 0) {
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "Checking Weather!");
-    // Begin dictionary
-    DictionaryIterator *iter;
-    app_message_outbox_begin(&iter);
-  
-    // Add a key-value pair
-    dict_write_uint8(iter, 0, 0);
-  
-    // Send the message!
-    app_message_outbox_send();
-  }
 }
 
 static void main_window_unload(Window *window) {
@@ -154,6 +170,9 @@ static void main_window_unload(Window *window) {
   // Destroy Clouds
   gbitmap_destroy(s_clouds_bitmap);
   layer_destroy(s_clouds_layer);
+  // Destroy Rain
+  gbitmap_destroy(s_rain_bitmap);
+  layer_destroy(s_rain_layer);
   // Destroy Textlayers
   text_layer_destroy(s_time_layer);
   // Destroy Inverter Layer
@@ -164,16 +183,8 @@ static void main_window_unload(Window *window) {
 
 static void update_weather()
 {
-  if (clouds)
-  {
-    layer_set_hidden(s_clouds_layer, false);
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "Showing Clouds!");
-  }
-  else
-  {
-    layer_set_hidden(s_clouds_layer, true);
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "NOT Showing Clouds!");
-  }
+  layer_set_hidden(s_clouds_layer, !clouds && !rain);
+  layer_set_hidden(s_rain_layer, !rain);
 }
 
 // Appmessage
@@ -198,7 +209,7 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
   }
   
   clouds = (strcmp(weather_buffer, "Clouds") == 0);
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "CLOUDS: %d", clouds);
+  rain = (strcmp(weather_buffer, "Rain") == 0);
   update_weather();
 }
 
